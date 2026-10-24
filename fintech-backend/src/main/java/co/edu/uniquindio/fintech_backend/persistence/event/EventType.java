@@ -1,0 +1,21 @@
+package co.edu.uniquindio.fintech_backend.persistence.event;
+
+public enum EventType {
+    // User events
+    USER_REGISTERED, USER_UPDATED, USER_ACTIVATED, USER_BLOCKED, USER_DEACTIVATED, USER_ROLE_CHANGED,
+
+    // Authentication events
+    CREDENTIAL_CREATED, PASSWORD_CHANGED,
+
+    // Wallet events
+    WALLET_CREATED, WALLET_UPDATED, WALLET_ACTIVATED, WALLET_DEACTIVATED,
+
+    // Transaction events
+    WALLET_RECHARGED, WALLET_WITHDRAWN, TRANSFER_COMPLETED, TRANSACTION_REVERSED,
+
+    // Scheduled operation events
+    OPERATION_SCHEDULED, OPERATION_EXECUTED, OPERATION_CANCELLED,
+
+    // Reward events
+    POINTS_EARNED, POINTS_DEDUCTED, REWARD_REDEEMED
+}
