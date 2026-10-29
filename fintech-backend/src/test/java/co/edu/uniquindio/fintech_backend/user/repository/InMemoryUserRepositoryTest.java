@@ -9,7 +9,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryUserRepositoryTest {
-
     private InMemoryUserRepository repository;
 
     @BeforeEach
@@ -43,7 +42,6 @@ class InMemoryUserRepositoryTest {
         assertTrue(repository.findById(user2.getId()).isEmpty());
     }
 
-
     @Test
     void shouldRejectDuplicateEmail() {
         // Arrange
@@ -55,7 +53,6 @@ class InMemoryUserRepositoryTest {
         assertTrue(repository.findById(user1.getId()).isPresent());
         assertTrue(repository.findById(user2.getId()).isEmpty());
     }
-
 
     @Test
     void shouldUpdateEmailIndex() {
@@ -74,7 +71,6 @@ class InMemoryUserRepositoryTest {
         assertEquals("1090123456", updatedUser.getIdentification());
     }
 
-
     @Test
     void shouldProtectStoredUserFromExternalChanges() {
         // Arrange
@@ -90,4 +86,18 @@ class InMemoryUserRepositoryTest {
         assertTrue(repository.findByEmail("carlos@gmail.com").isPresent());
         assertTrue(repository.findByEmail("carlos@hotmail.com").isEmpty());
     }
+
+    @Test
+    void shouldReturnEmptyForNonexistentIdentificationAndEmail() {
+        // Arrange
+        User user = new User("1090123456", "Carlos", "Perez", "carlos@gmail.com");
+        repository.save(user);
+        // Act & Assert
+        assertTrue(repository.findByIdentification("9999999999").isEmpty());
+        assertTrue(repository.findByEmail("unknown@gmail.com").isEmpty());
+        // The existing user must remain unchanged
+        assertTrue(repository.findById(user.getId()).isPresent());
+        assertEquals(1, repository.findAll().size());
+    }
+
 }

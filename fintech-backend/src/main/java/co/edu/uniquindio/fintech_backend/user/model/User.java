@@ -38,6 +38,23 @@ public class User {
         this.createdAt = source.createdAt;
     }
 
+    private User(UUID id, String identification, String firstName, String lastName, String email, Role role, UserStatus status, Instant createdAt) {
+        this.id = Objects.requireNonNull(id, "User ID is required");
+        this.createdAt = Objects.requireNonNull(createdAt, "Creation date is required");
+        this.role = Objects.requireNonNull(role, "User role is required");
+        this.status = Objects.requireNonNull(status, "User status is required");
+        if (identification == null || identification.isBlank()) {
+            throw new IllegalArgumentException("Identification cannot be blank");
+        }
+        this.identification = identification.trim();
+        // Reuse the existing profile validation
+        updateProfile(firstName, lastName, email);
+    }
+
+    public static User restore(UUID id, String identification, String firstName, String lastName, String email, Role role, UserStatus status, Instant createdAt) {
+        return new User(id, identification, firstName, lastName, email, role, status, createdAt);
+    }
+
     public void updateProfile(String firstName, String lastName, String email) {
         String newFirstName = requireText(firstName);
         String newLastName = requireText(lastName);

@@ -1,21 +1,16 @@
 package co.edu.uniquindio.fintech_backend.user.repository;
 
+import co.edu.uniquindio.fintech_backend.structures.hash.CustomHashMap;
 import co.edu.uniquindio.fintech_backend.user.model.User;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
-    private final Map<UUID, User> users = new HashMap<>();
-    private final Map<String, UUID> usersByIdentification = new HashMap<>();
-    private final Map<String, UUID> usersByEmail = new HashMap<>();
+    private final CustomHashMap<UUID, User> users = new CustomHashMap<>();
+    private final CustomHashMap<String, UUID> usersByIdentification = new CustomHashMap<>();
+    private final CustomHashMap<String, UUID> usersByEmail = new CustomHashMap<>();
 
     @Override
     public synchronized void save(User user) {
@@ -50,25 +45,27 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public synchronized Optional<User> findByIdentification(String identification) {
-        if (identification == null) {
+        UUID userId = usersByIdentification.get(identification);
+        if (userId == null) {
             return Optional.empty();
         }
-        UUID id = usersByIdentification.get(identification);
-        return findById(id);
+        return findById(userId);
     }
 
     @Override
     public synchronized Optional<User> findByEmail(String email) {
-        if (email == null) {
+        UUID userId = usersByEmail.get(email);
+        if (userId == null) {
             return Optional.empty();
         }
-        String normalizedEmail = email.strip().toLowerCase(Locale.ROOT);
-        UUID id = usersByEmail.get(normalizedEmail);
-        return findById(id);
+        return findById(userId);
     }
 
     @Override
     public synchronized Collection<User> findAll() {
-        return users.values().stream().map(User::new).toList();
+        List<User> result = new ArrayList<>();
+        users.forEachValue(user -> result.add(new User(user)));
+        return List.copyOf(result);
     }
+
 }
