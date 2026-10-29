@@ -1,8 +1,10 @@
-package co.edu.uniquindio.fintech_backend.user.snapshot;
+package co.edu.uniquindio.fintech_backend.user.persistence.snapshot;
 
 import co.edu.uniquindio.fintech_backend.user.model.Role;
 import co.edu.uniquindio.fintech_backend.user.model.User;
 import co.edu.uniquindio.fintech_backend.user.model.UserStatus;
+import co.edu.uniquindio.fintech_backend.user.persistence.snapshot.UserSnapshotEntry;
+import co.edu.uniquindio.fintech_backend.user.persistence.snapshot.UserSnapshotMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

@@ -8,9 +8,9 @@ import java.util.*;
 
 @Repository
 public class InMemoryUserRepository implements UserRepository {
-    private final CustomHashMap<UUID, User> users = new CustomHashMap<>();
-    private final CustomHashMap<String, UUID> usersByIdentification = new CustomHashMap<>();
-    private final CustomHashMap<String, UUID> usersByEmail = new CustomHashMap<>();
+    private CustomHashMap<UUID, User> users = new CustomHashMap<>();
+    private CustomHashMap<String, UUID> usersByIdentification = new CustomHashMap<>();
+    private CustomHashMap<String, UUID> usersByEmail = new CustomHashMap<>();
 
     @Override
     public synchronized void save(User user) {
@@ -68,4 +68,37 @@ public class InMemoryUserRepository implements UserRepository {
         return List.copyOf(result);
     }
 
+    @Override
+    public synchronized void replaceAll(Collection<User> users) {
+        Objects.requireNonNull(users, "Users collection is required");
+        // Build new indexes without modifying the current repository
+        CustomHashMap<UUID, User> newUsers = new CustomHashMap<>();
+        CustomHashMap<String, UUID> newIdentificationIndex = new CustomHashMap<>();
+        CustomHashMap<String, UUID> newEmailIndex = new CustomHashMap<>();
+        for (User user : users) {
+            Objects.requireNonNull(user, "User cannot be null");
+            User copy = new User(user);
+            UUID id = copy.getId();
+            String identification = copy.getIdentification();
+            String email = copy.getEmail();
+            // Validate uniqueness
+            if (newUsers.containsKey(id)) {
+                throw new IllegalArgumentException("Duplicate user ID");
+            }
+            if (newIdentificationIndex.containsKey(identification)) {
+                throw new IllegalArgumentException("Duplicate identification");
+            }
+            if (newEmailIndex.containsKey(email)) {
+                throw new IllegalArgumentException("Duplicate email");
+            }
+            // Populate temporary indexes
+            newUsers.put(id, copy);
+            newIdentificationIndex.put(identification, id);
+            newEmailIndex.put(email, id);
+        }
+        // Replace the repository only after successful validation
+        this.users = newUsers;
+        this.usersByIdentification = newIdentificationIndex;
+        this.usersByEmail = newEmailIndex;
+    }
 }

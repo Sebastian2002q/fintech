@@ -1,4 +1,4 @@
-package co.edu.uniquindio.fintech_backend.user.snapshot;
+package co.edu.uniquindio.fintech_backend.user.persistence.snapshot;
 
 import co.edu.uniquindio.fintech_backend.user.model.User;
 

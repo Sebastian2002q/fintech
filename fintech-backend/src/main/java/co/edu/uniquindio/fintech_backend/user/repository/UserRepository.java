@@ -12,4 +12,6 @@ public interface UserRepository {
     Optional<User> findByIdentification(String identification);
     Optional<User> findByEmail(String email);
     Collection<User> findAll();
+    void replaceAll(Collection<User> users);
+
 }
